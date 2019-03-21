@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>BankerLogin</title>
+    <!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
+    <script src="./node_modules/web3/dist/web3.min.js"></script> 
+    <style>
+        body {
+            background-color:white;
+            padding:none;
+            font-family: 'Raleway','Source Sans Pro', 'Arial';
+        }
+        .line{
+            background-color:darkorange;
+            height: 150px;
+            width: 100%;
+        }
+        .bank{
+            color:white;
+            text-align: center;
+            font-size: 50px;
+        }
+        .bankerForm{
+            margin-left: 3in;
+            margin-top: 0.5in;
+        }
+        input {
+            padding: 10px;
+            width: 30%;
+            margin-left: 20px;
+        }
+        button {
+            background-color: chocolate;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+        }
+        #information {
+            padding:1em;
+            background-color:aqua;
+            margin: 1em 0;
+            width: 70%;
+        }
+        #loader {
+            width: 100px;
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div class="line">
+        <h1 class="bank">CryptoBank</h1>
+    </div>
+    <div class="bankerForm">
+
+        <span id="countB"></span><br>
+        <hr>
+        
+        <label>Name:<input id="bankerName" type="text" style="margin-left: 105px"></label><br><br>
+
+        <label>ID:<input id="bankerID" type="text" style="margin-left: 132px"></label><br><br>
+        
+        <label>Phone Number:<input id="bankerPhoneNo" type="text" style="margin-left: 40px"></label><br><br>
+
+        <label>Branch Name:<input id="branchName" type="text" style="margin-left: 50px"></label><br><br>
+
+        <button id="submitBankerButton" onclick="mySubmit()">Submit</button>
+
+        <button id="showBankerButton" style="margin-left: 20px">Show Information</button>
+
+        <button id="viewButton" style="margin-left: 20px">View Customer Data</button>
+
+        <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif">
+
+        <p id="information"></p>
+    
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        }
+        else {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+
+        var MyContract = web3.eth.contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_bankerName",
+				"type": "string"
+			},
+			{
+				"name": "_bankerID",
+				"type": "uint256"
+			},
+			{
+				"name": "_bankerPhoneNo",
+				"type": "uint256"
+			},
+			{
+				"name": "_branchName",
+				"type": "string"
+			}
+		],
+		"name": "setBankerData",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_custName",
+				"type": "string"
+			},
+			{
+				"name": "_custID",
+				"type": "uint256"
+			},
+			{
+				"name": "_custPhoneNo",
+				"type": "uint256"
+			},
+			{
+				"name": "_custAddress",
+				"type": "string"
+			},
+			{
+				"name": "_custAccNo",
+				"type": "uint256"
+			}
+		],
+		"name": "setCustData",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "shareInfo",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "countBankers",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "countCustomers",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getBankerAcc",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getBankerData",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getCustAcc",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getCustData",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "i",
+				"type": "uint256"
+			}
+		],
+		"name": "getSharedCustData",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getSharedCustLen",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+
+        var Contract = MyContract.at('0x9d7f296e5c5d5a7e3419bdde3ba00acff17fc450');
+        console.log(Contract);
+
+        //var bankerEvent = Contract.bankerEvent({}, 'latest');
+
+    
+        $('#showBankerButton').click(() => {
+            Contract.getBankerData((error, result) => {
+            if(!error)
+            {
+                $('#information').html('Name: '+result[0]+' ID: '+result[1]+' Phone No: '+result[2]+' Branch: '+result[3]);
+                alert("Success!");
+            }
+            else
+                $("#loader").show();
+                console.error(error);
+            });
+        });
+
+        Contract.countBankers((err,res) => {
+            if(res){
+                $('#countB').html(res.c + 'Bankers');
+            }
+        });
+        
+        function mySubmit(){
+            let name = document.getElementById("bankerName").value;
+            //document.getElementById("information").innerHTML = x;
+            let id = document.getElementById("bankerID").value;
+
+            let phno = document.getElementById("bankerPhoneNo").value;
+
+            let branchn = document.getElementById("branchName").value;
+
+            /*Contract.setBankerData(name,id,phno,branchn,(error,result)=>{
+                if(error){
+                        $('#loader').show();
+                        console.log(error);
+                    }
+                    else{
+                        alert("Submitted SuccessFully!");
+                        $('#loader').hide();
+                }
+            });*/
+
+            Contract.setBankerData(name,id,phno,branchn);
+
+        }
+
+
+        /*$('#submitBankerButton').click(() => {
+            Contract.setBankerData(
+                $('#bankerName').val(),
+                $('#bankerID').val(),
+                $('#bankerPhoneNo').val(),
+                $('#branchName').val(),
+                (error,result) => {
+                    if(error){
+                        $('#loader').show();
+                        console.log(error);
+                    }
+                    else{
+                        alert("Submitted SuccessFully!");
+                        $('#loader').hide();
+                    }
+                }
+            )
+            }
+        );*/
+
+        $('#viewButton').click((error,result)=>{
+            if(!error){
+                let len = Contract.getSharedCustLen();
+                for(let i=0; i< len; i++){
+                    Contract.getSharedCustData(i);
+                }
+                alert("Success!");
+            }
+            else{
+                console.log(error);
+            }
+            
+        });
+
+
+    </script>
+        
+</body>
+</html>

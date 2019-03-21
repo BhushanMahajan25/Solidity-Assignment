@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home Page</title>
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css"> -->
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <style>
+        body {
+            background-color: white;
+            padding:none;
+            font-family: 'Raleway','Source Sans Pro', 'Arial';
+        }
+        .line{
+            background-color:darkorange;
+            height: 150px;
+            width: 100%;
+        }
+        .bank{
+            color:white;
+            text-align: center;
+            font-size: 50px;
+        }
+        .bankBtn{
+            margin-left: 5.2in;
+            height: 2cm;
+            width: 3cm;
+            margin-top: 1in;
+        }
+        .custBtn{
+            margin-left: 1in;
+            /* margin-right: 5in; */
+            height: 2cm;
+            width: 3cm;
+            margin-top: 1in;
+        }
+        button{
+            background-color: chocolate;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="line">
+        <h1 class="bank">CryptoBank</h1>
+    </div>
+    <div>
+        <button  value="banker"  class="bankBtn" onclick="window.location.href='file:///C:/Users/Dell/Desktop/Assignment-1/bankerLogin.html'">Banker</button>
+        <button  value="customer"  class="custBtn" onclick="window.location.href='file:///C:/Users/Dell/Desktop/Assignment-1/customerLogin.html'">Customer</button>
+        
+    </div>
+</body>
+</html>
